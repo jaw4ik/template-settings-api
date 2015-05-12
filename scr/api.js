@@ -11,6 +11,14 @@
         templateUrl = location.toString().substring(0, location.toString().indexOf('/settings/settings')) + '/',
         manifestUrl = templateUrl + 'manifest.json';//TODO: Change way of resolving manifest file path
 
+
+    //  token auth support;
+    var token = localStorage['token.settings'];
+    var isTokenAuthSupported = token !== undefined;
+    var headers = isTokenAuthSupported ? {'Authorization': 'Bearer ' + token } : {};
+    identifyUrl = isTokenAuthSupported ? baseUrl + '/auth/identity': identifyUrl;
+    //  token auth support;
+
     window.egApi = {
         init: init,
         getManifest: getManifest,
@@ -28,6 +36,7 @@
 
         var userDataPromise = $.ajax({
             url: identifyUrl,
+            headers: headers,
             cache: false,
             type: 'POST',
             contentType: 'application/json',
@@ -36,6 +45,7 @@
 
         var settingsPromise = $.ajax({
             url: settingsUrl,
+            headers: headers,
             cache: false,
             contentType: 'application/json',
             dataType: 'json'
@@ -43,6 +53,7 @@
 
         var manifestPromise = $.ajax({
             url: manifestUrl,
+            headers: headers,
             cache: false,
             contentType: 'application/json',
             dataType: 'json'
@@ -131,16 +142,16 @@
     function saveSettings(settings, extraSettings, successSaveMessage, failSaveMessage) {
         freezeEditor();
 
-        return $.post(settingsUrl, { settings: settings, extraSettings: extraSettings })
+        return $.post(settingsUrl, { settings: settings, extraSettings: extraSettings }, headers: headers)
             .done(function () {
                 sendNotificationToEditor(successSaveMessage, true);
             })
-            .fail(function () {
-                sendNotificationToEditor(failSaveMessage, false);
-            })
-            .always(function () {
-                unfreezeEditor();
-            });
+        .fail(function () {
+            sendNotificationToEditor(failSaveMessage, false);
+        })
+        .always(function () {
+            unfreezeEditor();
+        });
     }
 
     function freezeEditor() {
