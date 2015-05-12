@@ -145,7 +145,7 @@
     function saveSettings(settings, extraSettings, successSaveMessage, failSaveMessage) {
         freezeEditor();
 
-        return $.post(settingsUrl, { settings: settings, extraSettings: extraSettings }, headers: headers)
+        return $.post(settingsUrl, { settings: settings, extraSettings: extraSettings }, headers)
             .done(function () {
                 sendNotificationToEditor(successSaveMessage, true);
             })
