@@ -1,2 +1,2 @@
-# The API for easygenerator template setttings
+# The API for easygenerator template settings
 
