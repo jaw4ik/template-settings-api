@@ -9,14 +9,14 @@
         settingsUrl = baseUrl + '/api/course/' + getURLParameter('courseId') + '/template/' + getURLParameter('templateId'),
 
         templateUrl = location.toString().substring(0, location.toString().indexOf('/settings/')) + '/',
-        manifestUrl = templateUrl + 'manifest.json';//TODO: Change way of resolving manifest file path
+        manifestUrl = templateUrl + 'manifest.json'; //TODO: Change way of resolving manifest file path
 
 
     //  token auth support;
     var token = localStorage['token.settings'];
     var isTokenAuthSupported = token !== undefined;
-    var headers = isTokenAuthSupported ? {'Authorization': 'Bearer ' + token } : {};
-    identifyUrl = isTokenAuthSupported ? baseUrl + '/auth/identity': identifyUrl;
+    var headers = isTokenAuthSupported ? { 'Authorization': 'Bearer ' + token } : {};
+    identifyUrl = isTokenAuthSupported ? baseUrl + '/auth/identity' : identifyUrl;
     //  token auth support;
 
     window.egApi = {
@@ -29,13 +29,13 @@
     };
 
     function init() {
-        /* DEBUG */
+        /* DEBUG 
         var userDataPromise = $.Deferred().resolve([{ subscription: { accessType: 1, expirationDate: new Date(2016, 1, 1) } }]);
         var settingsPromise = $.getJSON('../../settings.js').then(function (response) { return [{ settings: JSON.stringify(response) }]; });
         var manifestPromise = $.getJSON(manifestUrl);
-        /* END_DEBUG */
+        END_DEBUG */
 
-        /* RELEASE
+        /* RELEASE */
         var userDataPromise = $.ajax({
             url: identifyUrl,
             headers: headers,
@@ -60,7 +60,7 @@
             contentType: 'application/json',
             dataType: 'json'
         });
-        END_RELEASE */
+        /* END_RELEASE */
 
         return $.when(manifestPromise, userDataPromise, settingsPromise).done(function (manifestResponse, userDataResponse, settingsResponse) {
             apiData.manifest = getManifestModel(manifestResponse[0]);
@@ -102,13 +102,16 @@
     }
 
     function getUserModel(userData) {
+        //  token auth support;
+        userDatais = isTokenAuthSupported ? userData.data : userData;
+        //  token auth support;
         var user = { accessType: 0 };
         var starterAccessType = 1;
         if (userData.subscription &&
-            userData.subscription.accessType &&
-            userData.subscription.accessType >= starterAccessType &&
-            new Date(userData.subscription.expirationDate) >= new Date()
-           ) {
+                userData.subscription.accessType &&
+                userData.subscription.accessType >= starterAccessType &&
+                new Date(userData.subscription.expirationDate) >= new Date()
+        ) {
             user.accessType = userData.subscription.accessType;
         }
         return user;
@@ -135,7 +138,6 @@
         return settings;
     }
 
-
     function getURLParameter(name) {
         return decodeURI(
             (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
@@ -145,14 +147,25 @@
     function saveSettings(settings, extraSettings, successSaveMessage, failSaveMessage) {
         freezeEditor();
 
-        return $.post(settingsUrl, { settings: settings, extraSettings: extraSettings }, headers)
-            .done(function () {
-                sendNotificationToEditor(successSaveMessage, true);
-            })
-        .fail(function () {
+        var data = {
+            settings: settings,
+            extraSettings: extraSettings
+        };
+
+        var requestArgs = {
+            url: settingsUrl,
+            headers: headers,
+            cache: false,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: data
+        }
+
+        return $.ajax(requestArgs).done(function () {
+            sendNotificationToEditor(successSaveMessage, true);
+        }).fail(function () {
             sendNotificationToEditor(failSaveMessage, false);
-        })
-        .always(function () {
+        }).always(function () {
             unfreezeEditor();
         });
     }
