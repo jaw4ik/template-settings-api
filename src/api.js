@@ -103,7 +103,7 @@
 
     function getUserModel(userData) {
         //  token auth support;
-        userDatais = isTokenAuthSupported ? userData.data : userData;
+        userData = isTokenAuthSupported ? userData.data : userData;
         //  token auth support;
         var user = { accessType: 0 };
         var starterAccessType = 1;
