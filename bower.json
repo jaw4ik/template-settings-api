@@ -1,0 +1,14 @@
+{
+  "name": "template-settings-api",
+  "version": "1.0.0",
+  "homepage": "https://github.com/dmitry-zaets/template-settings-api",
+  "authors": [
+    "Dmitry Zaets <dmitry.zaets@gmail.com>"
+  ],
+  "description": "The API for easygenerator template settings",
+  "main": "src/api.js",  
+  "keywords": [
+    "easygenerator"
+  ],
+  "license": "Apache"
+}
