@@ -171,7 +171,7 @@
 
     function postMessageToEditor(data) {
         var editorWindow = window.top;
-        editorWindow.postMessage(data, editorWindow.location.href);
+        editorWindow.postMessage(data, '*');
     }
 
     function sendNotificationToEditor(message, isSuccess) {
