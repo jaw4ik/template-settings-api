@@ -20,7 +20,8 @@
         getUser: getUser,
         getSettings: getSettings,
         saveSettings: saveSettings,
-        sendNotificationToEditor: sendNotificationToEditor
+        sendNotificationToEditor: sendNotificationToEditor,
+        showSettings: showSettings
     };
 
     function init() {
@@ -162,20 +163,24 @@
     }
 
     function freezeEditor() {
-        postMessageToEditor({ type: 'freeze', data: { freezeEditor: true } });
+        postMessageToEditor({ type: 'freeze-editor' });
     }
 
     function unfreezeEditor() {
-        postMessageToEditor({ type: 'freeze', data: { freezeEditor: false } });
+        postMessageToEditor({ type: 'unfreeze-editor' });
+    }
+
+    function sendNotificationToEditor(message, isSuccess) {
+        postMessageToEditor({ type: 'notification', data: { success: isSuccess, message: message } });
+    }
+
+    function showSettings() {
+        postMessageToEditor({ type: 'show-settings' });
     }
 
     function postMessageToEditor(data) {
         var editorWindow = window.top;
         editorWindow.postMessage(data, '*');
-    }
-
-    function sendNotificationToEditor(message, isSuccess) {
-        postMessageToEditor({ type: 'notification', data: { success: isSuccess, message: message } });
     }
 
 })();
